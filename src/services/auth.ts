@@ -8,8 +8,10 @@ export const login = async(
     credentials:LoginCredentials
 ):Promise<APIResponse<AuthResponse>> =>{
     const response = await api.post<APIResponse<AuthResponse>>(LOGIN_ENDPOINT,credentials);
+    console.log(response.data.success)
     if(response.data.success && response.data.data)
     {
+       console.log(response.data.success)
         const {tokens} = response.data.data;
         setAuthTokens(tokens.access_token,tokens.refresh_token)
     }
