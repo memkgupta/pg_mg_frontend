@@ -1,10 +1,22 @@
 import React from 'react'
-import { BaseField } from './types'
+import { BaseField, FormField } from './types'
+import FormContext, { FormProvider } from './FormContext'
+import { renderField } from './FieldRenderer'
+import { z } from 'zod'
 
-const GenericForm = ({fields}:{fields:BaseField<unknown>[]}) => {
+const CustomForm = ({fields}:{fields:BaseField<unknown>[]}) => {
+    
   return (
-    <div>GenericForm</div>
+    <div>
+        <FormProvider fields={fields} onSubmit={(d)=>{}} schema={z.object({})}>
+           <>
+            {
+                fields.map(field=>(renderField(field as FormField)))
+            }
+           </>
+        </FormProvider>
+    </div>
   )
 }
 
-export default GenericForm
+export default CustomForm
