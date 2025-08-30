@@ -3,7 +3,9 @@ import { z, ZodTypeAny } from "zod"
 export interface FormContextProps<T extends ZodTypeAny>{
     onSubmit:(formData:z.infer<T> )=>void,
     styling?:React.CSSProperties,
-    fields:FieldState[]
+    fields:FieldState[],
+    errors:{fieldId:string,message:string}[],
+    setErrors:(errs:{fieldId:string,message:string}[])=>void
 }
 export interface FieldState<T = any> {
   fieldId: string;
@@ -19,17 +21,20 @@ export enum FormFieldTypeEnum{
     TEXT_AREA="text_area",
     MULTI_TEXT="multi_text",
     DATE_RANGE="date_range",
-    CUSTOM="custom"
+    CHECKBOX_GROUP="checkbox_group",
+    CUSTOM="custom",
+    SELECT="select",
 
 }
 
 
 export interface BaseField<T> {
   fieldType: FormFieldTypeEnum; // discriminator
-  valueType: T;
+  valueType?: T;
   fieldId: string;
   label: string;
   placeholder?: string;
+  default:T;
   onChange?: (
     value: T,
     state: [T, React.Dispatch<React.SetStateAction<T>>]
@@ -45,6 +50,7 @@ export interface RangeField extends BaseField<number[]> {
   fieldType: FormFieldTypeEnum.RANGE;
   min?: number;
   max?: number;
+  step?:number
 }
 
 // ✅ Radio
@@ -68,7 +74,7 @@ export interface DateRangeField
 
 // ✅ ComboBox
 export interface ComboBoxField extends BaseField<string> {
-  fieldType: FormFieldTypeEnum.CUSTOM; // or EMAIL? double-check
+  fieldType: FormFieldTypeEnum.SELECT; // or EMAIL? double-check
   options: { label: string; value: string; key: string }[];
 }
 
@@ -85,7 +91,7 @@ export interface CheckboxGroupOption {
 }
 
 export interface CheckboxGroupField extends BaseField<string[]> {
-  fieldType: FormFieldTypeEnum.CHECKBOX; // ⚡ if you want distinct enum, add CHECKBOX_GROUP
+  fieldType: FormFieldTypeEnum.CHECKBOX_GROUP; // ⚡ if you want distinct enum, add CHECKBOX_GROUP
   options: CheckboxGroupOption[];
 }
 

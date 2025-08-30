@@ -1,40 +1,26 @@
-import React from "react";
-import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input"; // shadcn Input
-import { PhoneField } from "../types";
-import { useFormContext } from "../FormContext";
+import React from "react"
+import { Input } from "@/components/ui/input"
+import { PhoneField } from "../types"
+import BaseInputField from "./BaseInputField"
 
 function PhoneFieldInput({ field }: { field: PhoneField }) {
-  const { fields: states } = useFormContext();
-  const state = states.find((s) => s.fieldId === field.fieldId);
-
-  if (!state) {
-    return null;
-  }
-
-  const [value, setValue] = state.state as [
-    string,
-    React.Dispatch<React.SetStateAction<string>>
-  ];
-
   return (
-    <div className="space-y-3">
-      <Label htmlFor={field.fieldId}>{field.label}</Label>
-      <Input
-        id={field.fieldId}
-        type="tel" 
-        value={value}
-        placeholder={field.placeholder ?? "Enter phone number"}
-        onChange={(e) => {
-          const val = e.target.value;
-          setValue(val);
-          if (field.onChange) {
-            field.onChange(val, state.state as any);
-          }
-        }}
-      />
-    </div>
-  );
+    <BaseInputField fieldId={field.fieldId} label={field.label}>
+      {(value, setValue) => (
+        <Input
+          id={field.fieldId}
+          type="tel"
+          value={value as string}
+          placeholder={field.placeholder ?? "Enter phone number"}
+          onChange={(e) => {
+            const val = e.target.value
+            setValue(val)
+            field.onChange?.(val, [value, setValue] as any)
+          }}
+        />
+      )}
+    </BaseInputField>
+  )
 }
 
-export default PhoneFieldInput;
+export default PhoneFieldInput

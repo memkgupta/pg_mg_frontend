@@ -1,4 +1,4 @@
-import { BaseField, CheckBoxField, EmailField, FormField, FormFieldTypeEnum, MultiTextField, RadioField } from "./types";
+import { BaseField, CheckBoxField, CheckboxGroupField, ComboBoxField, EmailField, FormField, FormFieldTypeEnum, MultiTextField, RadioField } from "./types";
 
 // import CustomFieldRenderer from "./CustomFieldRenderer";
 import RadioFieldInput from "./fields/RadioFieldInput";
@@ -9,6 +9,8 @@ import MultiTextFieldInput from "./fields/MultiTextFieldInput";
 import TextField from "./fields/TextField";
 import RangeFieldInput from "./fields/RangeFieldInput";
 import { DateRangePicker } from "./fields/DateRangePicker";
+import CheckboxGroupFieldInput from "./fields/CheckBoxGroupInput";
+import ComboBoxFieldInput from "./fields/ComboBoxFieldInput";
 
 
 export function renderField(field: FormField):React.ReactNode {
@@ -28,10 +30,12 @@ export function renderField(field: FormField):React.ReactNode {
 
     case FormFieldTypeEnum.TEXT:
       return <TextField field={field as BaseField<string>} />;
-
+    case FormFieldTypeEnum.CHECKBOX_GROUP:
+      return <CheckboxGroupFieldInput field={field as CheckboxGroupField}/>
     case FormFieldTypeEnum.RANGE:
       return <RangeFieldInput field={field} />;
-
+    case FormFieldTypeEnum.SELECT:
+      return <ComboBoxFieldInput field={field as ComboBoxField}/>
     // case FormFieldTypeEnum.TEXT_AREA:
     //   return <TextAreaFieldInput field={field} />;
 

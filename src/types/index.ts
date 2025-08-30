@@ -41,4 +41,52 @@ export interface AuthResponse {
   tokens: AuthTokens;
 }
 
+export interface FormStyle{
+  gapBetweenFields:number,
+  formMargin?:number,
+  cols?:{md:number,sm?:number,lg?:number},
+  buttonSubmitColor?:string,
+  formPadding?:number,
+  containerClassName?:string,
+  fieldClassName?:string
+  
+}
+export interface Page<T>{
+    data:T[],
+    next:number|null,
+    prev:number|null,
+    totalResults:number
+}
+export interface IPg {
+  id?: string;
 
+  name: string;
+
+  description?: string;
+
+  ownerName: string;
+
+  contactNumber: string;
+
+  email: string;
+
+  address: string;
+
+  city: string;
+
+  state: string;
+
+  pincode: string;
+
+  isActive?: boolean;
+
+  isVerified?: boolean;
+
+  amenities?: string[];
+
+  totalRooms?: number;
+
+  // roomCategories?: CreateRoomCategoryDto[];
+
+  ownerId: number;
+}
