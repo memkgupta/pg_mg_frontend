@@ -5,7 +5,10 @@ const PageLayout = ({children}:{children:React.ReactNode}) => {
   return (
     <div className='space-y-3'>
         <Navbar/>
-        {children}
+        <main className='mt-17'>
+{children}
+        </main>
+        
     </div>
   )
 }

@@ -13,7 +13,7 @@ import { ReviewCarousel } from '@/components/features/pg/reviews/pg.review'
 export default async function ViewPgPage({ params }: { params: Promise<{ id: string }> }){
   const {id} =await params
   const res = await fetch(`${BACKEND_BASE_URL}pg/view/${id}`, {
-    cache: "no-store" // ❗important if you want SSR instead of caching
+    cache: "no-store" 
   })
   const resData = await res.json()
   console.log(resData.data.roomCategories)

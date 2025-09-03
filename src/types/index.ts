@@ -112,6 +112,7 @@ export interface IRoom{
   noOfFreeBeds: number;
   pgId: string;
   categoryId: string;
+  category?:IRoomCategory;
   roomNumber:number;
   floorNumber:number;
 }
@@ -121,4 +122,15 @@ export interface IReview {
   rating: number; // 1 to 5
   comment?: string;
   createdAt: string;
+}
+export interface IBooking{
+        id: string;
+        startDate:Date,
+  userId: number;
+  pgId: string;
+  roomId: string;
+  bookingStatus: string;
+  transactionId?: string;
+  createdAt: Date;
+  updatedAt: Date;
 }

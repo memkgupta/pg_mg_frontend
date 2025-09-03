@@ -5,8 +5,11 @@ import { Button } from "@/components/ui/button";
 import { Bed, Thermometer } from "lucide-react";
 import { IRoomCategory, IRoom } from "@/types";
 import { useApiGet } from "@/hooks/api_hooks";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
+import Link from "next/link";
 
-interface FloorLayout {
+export interface FloorLayout {
   floorNumber: number;
   rooms: IRoom[];
 }
@@ -20,7 +23,7 @@ export function BookNow({ categories, pgId }: Props) {
   const [selectedCategoryId, setSelectedCategoryId] = useState<string>(
     categories[0]?.id ?? ""
   );
-
+  const router = useRouter()
   const selectedCategory = categories.find((c) => c.id === selectedCategoryId);
 
   // 👇 Fetch layout instead of raw rooms
@@ -41,7 +44,7 @@ export function BookNow({ categories, pgId }: Props) {
     .filter((floor) => floor.rooms.length > 0);
 
   const [selectedRoomId, setSelectedRoomId] = useState<string>("");
-
+  const [selectedFloor,setSelectedFloor] = useState<number>(0);
   useEffect(() => {
     // Reset when category changes
     const firstAvailable = categoryRooms[0]?.rooms[0];
@@ -107,7 +110,9 @@ export function BookNow({ categories, pgId }: Props) {
                   {floor.rooms.map((room) => (
                     <div
                       key={room.id}
-                      onClick={() => room.noOfFreeBeds > 0 && setSelectedRoomId(room.id)}
+                      onClick={() => {room.noOfFreeBeds > 0 && setSelectedRoomId(room.id);
+                        room.noOfFreeBeds>0 && setSelectedFloor(floor.floorNumber)
+                      }}
                       className={`w-12 h-12 flex items-center justify-center border rounded-md cursor-pointer 
                         ${room.noOfFreeBeds <= 0 ? "bg-gray-300 cursor-not-allowed" : ""}
                         ${
@@ -130,13 +135,14 @@ export function BookNow({ categories, pgId }: Props) {
         )}
 
         {/* Book Now Button */}
-        <Button
-          disabled={!selectedRoomId}
-          onClick={() => selectedRoomId && console.log("Booking:", selectedRoomId)}
+        <Link
+        
+          href={`/book?room=${selectedRoomId}&category=${selectedCategoryId}&floor=${selectedFloor}&pgId=${pgId}`}
+     
           className="mt-4"
         >
           Book Now
-        </Button>
+        </Link>
       </CardContent>
     </Card>
   );
