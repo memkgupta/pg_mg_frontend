@@ -17,11 +17,11 @@ interface PaginatedViewProps<T> {
 
 export function PaginatedView<T>({ page, onPageChange, children }: PaginatedViewProps<T>) {
   return (
-    <div className="flex min-h-screen flex-col">
-      {/* Content Section (fills most of screen) */}
-      <div className="flex-1">{children}</div>
+    <div className="flex flex-col min-h-screen"> 
+     <p className="text-3xl font-extrabold text-black">Total {page.totalResults} PGs found</p>
+      <div className="flex-1 p-4">{children}</div>
 
-      {/* Pagination Controls at bottom */}
+    
       <div className="flex items-center justify-between border-t p-4">
         <div className="text-sm text-muted-foreground">
           Total Results: {page.totalResults}
@@ -33,7 +33,7 @@ export function PaginatedView<T>({ page, onPageChange, children }: PaginatedView
             disabled={!page.prev}
             onClick={() => page.prev && onPageChange(page.prev)}
           >
-            <ChevronLeft className="h-4 w-4" />
+            <ChevronLeft className="h-4 w-4 mr-1" />
             Previous
           </Button>
 
@@ -44,7 +44,7 @@ export function PaginatedView<T>({ page, onPageChange, children }: PaginatedView
             onClick={() => page.next && onPageChange(page.next)}
           >
             Next
-            <ChevronRight className="h-4 w-4" />
+            <ChevronRight className="h-4 w-4 ml-1" />
           </Button>
         </div>
       </div>

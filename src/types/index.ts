@@ -57,6 +57,12 @@ export interface Page<T>{
     prev:number|null,
     totalResults:number
 }
+export interface IPgImage{
+    id:string;
+    url:string;
+    position:number;
+    caption?:string
+}
 export interface IPg {
   id?: string;
 
@@ -86,7 +92,33 @@ export interface IPg {
 
   totalRooms?: number;
 
-  // roomCategories?: CreateRoomCategoryDto[];
+  images:IPgImage[]
+  roomCategories?: IRoomCategory[];
 
   ownerId: number;
+}
+export interface IRoomCategory{
+  id: string
+  name: string
+  description: string
+  isAc: boolean
+  noOfBeds: number
+  baseRent: number
+  createdAt: string
+  updatedAt: string
+}
+export interface IRoom{
+  id: string;
+  noOfFreeBeds: number;
+  pgId: string;
+  categoryId: string;
+  roomNumber:number;
+  floorNumber:number;
+}
+export interface IReview {
+  id: string;
+  userName: string;
+  rating: number; // 1 to 5
+  comment?: string;
+  createdAt: string;
 }

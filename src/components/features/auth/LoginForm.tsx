@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { useAuth } from "@/context/AuthContext";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 
 export function LoginForm() {
   const form = useForm<LoginSchema>({
@@ -19,10 +19,20 @@ export function LoginForm() {
     },
   });
   const router = useRouter()
+  const params = useSearchParams()
   const {login} = useAuth()
   const onSubmit = async(values: LoginSchema) => {
     await login({email:values.email,password:values.password})
-    router.replace("/dashboard")
+    const redirect = params.get('redirect')
+    if(redirect)
+    {
+      router.replace(redirect);
+      
+    }
+    else{
+router.replace("/dashboard")
+    }
+    
   };
 
   return (

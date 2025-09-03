@@ -104,7 +104,7 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(new URL('/dashboard', request.url));
   }
 
-  // If the user is NOT logged in and tries to go to a protected page, redirect them
+
   if (!validAccessToken && pathname.startsWith('/dashboard')) {
     return NextResponse.redirect(new URL('/login', request.url));
   }

@@ -1,11 +1,41 @@
 import React from 'react'
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { MapPin, Phone, Mail, Home, Building2 } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { IPg } from '@/types'
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel"
+import Image from 'next/image'
+import Link from 'next/link'
 export function PgCard({ pg }: { pg: IPg }) {
   return (
-    <Card className="w-full max-w-md rounded-2xl shadow-md">
+    <Card className="w-full max-w-md rounded-2xl shadow-md overflow-hidden">
+       {pg.images && pg.images.length > 0 && (
+        <Carousel className="w-full">
+          <CarouselContent>
+            {pg.images
+              .sort((a, b) => a.position - b.position) // sort by position
+              .map((img) => (
+              <CarouselItem key={img.id} className="flex justify-center">
+                <div className="relative w-full h-60">
+                  <Image
+                    src={img.url}
+                    alt={img.caption ?? "PG Image"}
+                    fill
+                    className="object-cover rounded-t-2xl"
+                  />
+                  {img.caption && (
+                    <div className="absolute bottom-0 left-0 w-full bg-black/40 text-white text-sm p-2">
+                      {img.caption}
+                    </div>
+                  )}
+                </div>
+              </CarouselItem>
+            ))}
+          </CarouselContent>
+          <CarouselPrevious />
+          <CarouselNext />
+        </Carousel>
+      )}
       <CardHeader>
         <CardTitle className="flex items-center justify-between">
           {pg.name}
@@ -53,6 +83,9 @@ export function PgCard({ pg }: { pg: IPg }) {
           )}
         </div>
       </CardContent>
+      <CardFooter className='flex justify-end'>
+        <Link href={`/pg/${pg.id}`} className='bg-green-400 px-3 py-2 text-black rounded-md'>View</Link>
+      </CardFooter>
     </Card>
   )
 }
