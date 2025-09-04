@@ -1,6 +1,10 @@
 "use client";
+import PageLoader from "@/components/common/Loader";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useApiGet } from "@/hooks/api_hooks";
+import { IPg, IRoom, IRoomCategory } from "@/types";
 import { Bed, Wifi, Snowflake, ShowerHead, Users } from "lucide-react";
+
 
 const roommates = [
   { id: 1, name: "Rahul Verma", room: "203", status: "Active" },
@@ -15,8 +19,16 @@ const facilities = [
 ];
 
 export default function RoomPage() {
+  const{data:room,isFetching} = useApiGet<{roomDetails:IRoom,roomMates:{name?:string,phone?:string}[]}>(
+    `/aggregate/dashboard/room`,{},{
+      queryKey:["account-room"]
+    }
+  );
   return (
-    <div className="min-h-screen bg-gray-50 p-6 space-y-6">
+    <>
+    {
+     !room || isFetching ? (<PageLoader/>) :(
+        <div className="min-h-screen bg-gray-50 p-6 space-y-6">
       {/* Header */}
       <h1 className="text-2xl font-bold flex items-center gap-2">
         <Bed size={24} className="text-blue-600" /> My Room
@@ -29,10 +41,10 @@ export default function RoomPage() {
           <CardTitle>Room Details</CardTitle>
         </CardHeader>
         <CardContent className="space-y-2 text-gray-700">
-          <p><strong>PG Name:</strong> Sunrise PG</p>
-          <p><strong>Room No:</strong> 203</p>
-          <p><strong>Type:</strong> Double Sharing</p>
-          <p><strong>Rent:</strong> ₹8000 / month</p>
+          <p><strong>PG Name:</strong> {room.roomDetails.pg?.name}</p>
+          <p><strong>Room No:</strong> {room.roomDetails.roomNumber}</p>
+          <p><strong>Type:</strong> {room.roomDetails.category?.name}</p>
+          <p><strong>Rent:</strong> {room.roomDetails.category?.baseRent} / month</p>
         </CardContent>
       </Card>
 
@@ -44,13 +56,13 @@ export default function RoomPage() {
         </CardHeader>
         <CardContent>
           <ul className="space-y-2">
-            {roommates.map((mate) => (
+            {room.roomMates.map((mate,index) => (
               <li
-                key={mate.id}
+                key={index}
                 className="flex justify-between items-center p-2 rounded-lg bg-gray-100"
               >
                 <span className="font-medium">{mate.name}</span>
-                <span className="text-xs text-green-600">{mate.status}</span>
+                <span className="text-xs ">{mate.phone}</span>
               </li>
             ))}
           </ul>
@@ -64,13 +76,13 @@ export default function RoomPage() {
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {facilities.map((f) => (
+            {room.roomDetails.pg.amenities?.map((f) => (
               <div
-                key={f.id}
+                key={f}
                 className="flex flex-col items-center justify-center p-4 border rounded-xl shadow-sm bg-white"
               >
-                {f.icon}
-                <span className="text-sm mt-2 text-gray-700">{f.name}</span>
+              
+                <span className="text-sm mt-2 text-gray-700">{f}</span>
               </div>
             ))}
           </div>
@@ -89,5 +101,8 @@ export default function RoomPage() {
         </CardContent>
       </Card>
     </div>
+      )
+    }
+    </>
   );
 }

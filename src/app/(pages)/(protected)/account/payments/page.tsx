@@ -3,6 +3,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { CreditCard, CheckCircle, XCircle, Clock } from "lucide-react";
+import { useApiGet } from "@/hooks/api_hooks";
+import { IRent } from "@/types";
 
 const paymentHistory = [
   {
@@ -31,7 +33,9 @@ export default function PaymentsPage() {
     dueDate: "01 Sep 2025",
     status: "Pending",
   };
-
+  const {data} = useApiGet<{payments:any[],dueRents:IRent[]}>(`/aggregate/dashboard/payments`,{},{
+    queryKey:["account-payment"]
+  })
   return (
     <div className="min-h-screen bg-gray-50 p-6 space-y-6">
       {/* Header */}

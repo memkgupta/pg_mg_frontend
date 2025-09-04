@@ -115,6 +115,17 @@ export interface IRoom{
   category?:IRoomCategory;
   roomNumber:number;
   floorNumber:number;
+  pg:IPg
+}
+export interface IRent{
+    id: string;
+  tenantId: string;
+  pgId: string;
+  rentStatus: string;
+  monthDateScheduled: number;
+  lastDatePaid?: Date;
+  monthsDue: number;
+  amount: number;
 }
 export interface IReview {
   id: string;
