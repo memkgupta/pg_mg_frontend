@@ -105,8 +105,14 @@ export async function middleware(request: NextRequest) {
   }
 
 
-  if (!validAccessToken && pathname.startsWith('/dashboard')) {
-    return NextResponse.redirect(new URL('/login', request.url));
+  if (!validAccessToken &&( pathname.startsWith('/dashboard') || pathname.startsWith("/account"))) {
+   const originalPath = request.nextUrl.pathname + request.nextUrl.search;
+
+   
+    const loginUrl = new URL("/login", request.url);
+    loginUrl.searchParams.set("redirect", originalPath);
+
+    return NextResponse.redirect(loginUrl);
   }
   if(!validAccessToken && pathname.startsWith("/book"))
   {
@@ -123,7 +129,7 @@ export async function middleware(request: NextRequest) {
 
 // Config to specify which paths the middleware should run on
 export const config = {
-  matcher: ['/login', '/signup', '/dashboard/:path*',
+  matcher: ['/login', '/signup', '/dashboard/:path*','/account/:path*',
     '/book/:path*'
   ],
 };

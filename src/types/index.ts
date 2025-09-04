@@ -128,9 +128,23 @@ export interface IBooking{
         startDate:Date,
   userId: number;
   pgId: string;
+  pg?:IPg;
+  room?:IRoom;
   roomId: string;
   bookingStatus: string;
   transactionId?: string;
   createdAt: Date;
   updatedAt: Date;
+}
+export interface IDashboard{
+ pg:{name:string,rent?:number,room_no:string,address:string};
+    rent:{
+        status:string,
+        date:Date,
+        
+        dueMonths:number,
+    };
+    notices:any[];
+    complaints:any[];
+    activities:any[]
 }

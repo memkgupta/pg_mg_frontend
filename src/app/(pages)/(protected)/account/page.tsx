@@ -3,10 +3,25 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Bed, CalendarCheck, CreditCard, AlertTriangle, CalendarDays, User, Megaphone, Phone } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useApiGet } from "@/hooks/api_hooks";
+import { useAuth } from "@/context/AuthContext";
+import { IDashboard } from "@/types";
+import PageLoader from "@/components/common/Loader";
+import { format } from "date-fns";
 
 export default function AccountHomePage() {
+  const auth = useAuth()
+ 
+    const {data:dashboard,isFetching } = useApiGet<IDashboard>(`/aggregate/dashboard`,{},{
+    queryKey:["account-home-page"]
+  });
+  
+  // const {data} =
   return (
-     <div className=" bg-gray-50 p-6 space-y-6 md:mt-0 mt-16">
+<>
+{
+  !dashboard || isFetching?(<PageLoader/>):(
+         <div className=" bg-gray-50 p-6 space-y-6 md:mt-0 mt-16">
       {/* Top Section */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         
@@ -18,10 +33,10 @@ export default function AccountHomePage() {
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-2 text-gray-700">
-            <p><strong>PG Name:</strong> Sunrise PG</p>
-            <p><strong>Room No:</strong> 203</p>
-            <p><strong>Rent:</strong> ₹8000 / month</p>
-            <p><strong>Address:</strong> Sector 12, Noida</p>
+            <p><strong>PG Name:</strong> {dashboard.pg.name}</p>
+            <p><strong>Room No:</strong> {dashboard.pg.room_no}</p>
+            <p><strong>Rent:</strong> {dashboard.pg.rent}/ month</p>
+            <p><strong>Address:</strong> {dashboard.pg.address}</p>
           </CardContent>
         </Card>
 
@@ -33,9 +48,9 @@ export default function AccountHomePage() {
             </CardTitle>
           </CardHeader>
           <CardContent className="text-gray-700">
-            <p><strong>Rent Due:</strong> ₹8000</p>
-            <p><strong>Date:</strong> 01 Sep 2025</p>
-            <p className="text-red-600 font-medium">Status: Pending</p>
+            <p><strong>Rent Due:</strong> {dashboard.rent.dueMonths*(dashboard.pg.rent||0)}</p>
+            <p><strong>Date:</strong> {format(dashboard.rent.date,"PPP")}</p>
+            <p className="text-red-600 font-medium">Status: {dashboard.rent.status}</p>
           </CardContent>
         </Card>
       </div>
@@ -109,5 +124,8 @@ export default function AccountHomePage() {
         </CardContent>
       </Card>
     </div>
+  )
+}
+</>
   );
 }

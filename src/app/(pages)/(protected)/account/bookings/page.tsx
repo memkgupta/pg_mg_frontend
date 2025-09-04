@@ -2,40 +2,24 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Bed, CalendarDays } from "lucide-react";
+import { useApiGet } from "@/hooks/api_hooks";
+import { IBooking, Page } from "@/types";
+import { PaginatedView } from "@/components/common/PaginatedView";
+import PageLoader from "@/components/common/Loader";
+import { useState } from "react";
+import { format } from "date-fns";
 
-const bookings = [
-  {
-    id: 1,
-    pgName: "Sunrise PG",
-    room: "203",
-    type: "Double Sharing",
-    startDate: "01 Aug 2025",
-    endDate: "31 Dec 2025",
-    status: "Active",
-  },
-  {
-    id: 2,
-    pgName: "Green Villa PG",
-    room: "105",
-    type: "Single Room",
-    startDate: "01 Jan 2025",
-    endDate: "31 Jul 2025",
-    status: "Expired",
-  },
-  {
-    id: 3,
-    pgName: "Skyline PG",
-    room: "502",
-    type: "Triple Sharing",
-    startDate: "01 Feb 2024",
-    endDate: "30 Apr 2024",
-    status: "Cancelled",
-  },
-];
+
 
 export default function BookingPage() {
+const [page,setPage] = useState(0);
+  const {data:bookingPage,isFetching} = useApiGet<Page<IBooking>>(`/aggregate/dashboard/bookings`,{},{
+    queryKey:["account-bookings"]
+  })
   return (
-    <div className="min-h-screen bg-gray-50 p-6 space-y-6">
+<>
+{!bookingPage || isFetching ? (<PageLoader/>):(  <PaginatedView onPageChange={(p)=>{setPage(p)}} page={bookingPage} >
+      <div className="min-h-screen bg-gray-50 p-6 space-y-6">
       {/* Header */}
       <h1 className="text-2xl font-bold flex items-center gap-2">
         <CalendarDays size={24} className="text-blue-600" /> My Bookings
@@ -44,11 +28,11 @@ export default function BookingPage() {
 
       {/* Booking Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {bookings.map((b) => (
+        {bookingPage.data.map((b) => (
           <Card
             key={b.id}
             className={`rounded-2xl shadow-lg transition ${
-              b.status === "Active"
+              b.bookingStatus === "Active"
                 ? "bg-white hover:shadow-xl"
                 : "bg-gray-100 grayscale opacity-80"
             }`}
@@ -56,30 +40,29 @@ export default function BookingPage() {
             <CardHeader className="flex justify-between items-center">
               <CardTitle className="flex items-center gap-2">
                 <Bed size={20} className="text-blue-600" />
-                {b.pgName}
+                {b.pg?.name}
               </CardTitle>
               <Badge
                 variant={
-                  b.status === "Active"
+                  b.bookingStatus === "Active"
                     ? "secondary"
-                    : b.status === "Expired"
+                    : b.bookingStatus === "Expired"
                     ? "outline"
                     : "destructive"
                 }
               >
-                {b.status}
+                {b.bookingStatus}
               </Badge>
             </CardHeader>
             <CardContent className="space-y-2 text-gray-700 text-sm">
-              <p><strong>Room No:</strong> {b.room}</p>
-              <p><strong>Type:</strong> {b.type}</p>
-              <p>
-                <strong>Duration:</strong> {b.startDate} → {b.endDate}
-              </p>
+             <p>{format(b.createdAt,"PPP")}</p>
+              
             </CardContent>
           </Card>
         ))}
       </div>
     </div>
+  </PaginatedView>)}
+</>
   );
 }
