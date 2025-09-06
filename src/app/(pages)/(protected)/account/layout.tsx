@@ -3,10 +3,12 @@ import AccountSidebar from '@/components/features/account/account_sidebar'
 import { FloatingDockDemo } from '@/components/features/account/floating_nav'
 import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar'
 import React from 'react'
+import { Toaster } from 'sonner'
 
 const AccountLayout = ({children}:{children:React.ReactNode}) => {
   return (
    <div className=''>
+    <Toaster/>
     <div className='md:hidden'>
       {children}
           <FloatingDockDemo/>

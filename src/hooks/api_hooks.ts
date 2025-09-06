@@ -65,11 +65,16 @@ export function useApiPost<T,D>(url:string,apiOptions:AxiosRequestConfig,data:D,
       
     },
     onSuccess:(data,variables,context)=>{
-      if(queryKey)
-      {
-        queryClient.invalidateQueries({queryKey});
-      }
+      console.log("Trying to updatye")
+       if(queryKey)
+        {
+         queryClient.setQueryData(queryKey,(old:T[]|undefined)=>{
+          if(!old) return [data]
+          return [...old,data];
+         })
+        }
       if(onSuccess){
+        console.log("Working")
         onSuccess(data,variables,context)
       }
     },
@@ -81,7 +86,8 @@ export function useApiPost<T,D>(url:string,apiOptions:AxiosRequestConfig,data:D,
     ...mutationOptions
   })
 }
-
+// T ->data we get
+// D->data we pass
 export function useApiPut<T = unknown,D = unknown >(url:string,options:ApiMutationOptions<T,D,AxiosError>,data:D,apiOptions:AxiosRequestConfig){
   const {
     queryKey,
@@ -98,7 +104,12 @@ export function useApiPut<T = unknown,D = unknown >(url:string,options:ApiMutati
       onSuccess:(data,variables,context)=>{
         if(queryKey)
         {
-          queryClient.invalidateQueries({queryKey})
+         queryClient.setQueryData(queryKey,(old:T[]|undefined)=>{
+          
+          if(!old) return [data]
+          return [data,...old];
+         })
+        
         }
         if(onSuccess){
           onSuccess(data,variables,context)

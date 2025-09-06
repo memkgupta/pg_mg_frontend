@@ -159,3 +159,43 @@ export interface IDashboard{
     complaints:any[];
     activities:any[]
 }
+export enum ComplaintStatus{
+    RESOLVED = "resolved",
+    ACTIVE = "active",
+    PENDING = "pending"
+}
+export interface ITenant{
+  // tenant.dto.ts
+
+  id: string;
+  fromPlatform: boolean;
+  userId?: number;
+  discount: number;
+
+  // Replace relations with IDs
+  roomId: string;
+  rentId?: string;
+
+  adhaar?: string;
+  photo: string;
+  verification?: string;
+  name: string;
+  phoneNumber?: string;
+  email: string;
+  isActive: boolean;
+
+  createdAt: Date;
+  updatedAt: Date;
+
+
+}
+export interface IComplaint{
+      id:string;
+    createdAt:Date;
+    title:string;
+    updatedAt:Date;
+    status:ComplaintStatus;
+    description:string;
+    tenant:Partial<ITenant> | ITenant | string
+    pg:Partial<IPg>|IPg | string
+}

@@ -7,42 +7,121 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { AlertTriangle, CheckCircle } from "lucide-react";
-
-const complaints = [
-  {
-    id: 1,
-    title: "WiFi not working",
-    desc: "Internet is down since last night in Room 203.",
-    date: "20 Aug 2025",
-    status: "Resolved",
-  },
-  {
-    id: 2,
-    title: "Water Supply Issue",
-    desc: "No water in bathroom from morning.",
-    date: "28 Aug 2025",
-    status: "Pending",
-  },
-];
+import { useApiGet, useApiPost } from "@/hooks/api_hooks";
+import { APIResponse, ComplaintStatus, IComplaint } from "@/types";
+import PageLoader from "@/components/common/Loader";
+import { format } from "date-fns";
+import api from "@/services/api";
+import { useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
+import CustomForm from "@/components/utils/form_builder/form";
+import { FormField, FormFieldTypeEnum } from "@/components/utils/form_builder/types";
+import { z } from "zod";
+import {useDebounce} from "@uidotdev/usehooks"
+// const complaints = [
+//   {
+//     id: 1,
+//     title: "WiFi not working",
+//     desc: "Internet is down since last night in Room 203.",
+//     date: "20 Aug 2025",
+//     status: "Resolved",
+//   },
+//   {
+//     id: 2,
+//     title: "Water Supply Issue",
+//     desc: "No water in bathroom from morning.",
+//     date: "28 Aug 2025",
+//     status: "Pending",
+//   },
+// ];
 
 export default function ComplaintPage() {
   const [newComplaint, setNewComplaint] = useState({ title: "", desc: "" });
-
-  const handleSubmit = () => {
+  const [open,setIsOpen] = useState(false);
+  const mutation = useApiPost<IComplaint,{title:string,description:string}>(`/tenant/complaint`,{},{
+      title:newComplaint.title,
+      description:newComplaint.desc
+    },{queryKey:["dashboard-complaints"],onSuccess:(data)=>{
+      
+      toast.success(`Your complaint has been registered`);
+        setNewComplaint({ title: "", desc: "" });
+        setIsOpen(false)
+    }})
+    const getParams = (filters:{title:string,status?:ComplaintStatus})=>{
+      const params:any = {}
+      if(filters.title!="")
+      {
+        params["title~"] = filters.title
+      }
+      if(filters.status)
+      {
+        params["status"] = filters.status
+      }
+      return params
+    }
+  const handleSubmit = async() => {
     console.log("New Complaint Submitted:", newComplaint);
-    // Here you’d normally send it to backend
-    setNewComplaint({ title: "", desc: "" });
-  };
 
+   try{
+
+    await mutation.mutateAsync({title:newComplaint.title,description:newComplaint.desc})
+    
+    
+  
+   }
+   catch(error)
+   {
+    
+   }
+  };
+  const [filters,setFilters] = useState<{title:string,status:ComplaintStatus|undefined}>({title:"",status:undefined})
+
+  const debounced = useDebounce(filters,500)
+  const filterFormFields:FormField[] = [
+    {
+      fieldId:"title",
+      fieldType:FormFieldTypeEnum.TEXT,
+      label:"Title",
+      onChange(value, state) {
+        setFilters({...filters,title:value})
+      },
+      default:""
+    },
+    {
+      fieldId:"status",
+      fieldType:FormFieldTypeEnum.SELECT,
+       options:[
+        {key:ComplaintStatus.ACTIVE.toString(),label:ComplaintStatus.ACTIVE,value:ComplaintStatus.ACTIVE.toString()},
+         {key:ComplaintStatus.PENDING.toString(),label:ComplaintStatus.PENDING,value:ComplaintStatus.PENDING.toString()},
+          {key:ComplaintStatus.RESOLVED.toString(),label:ComplaintStatus.RESOLVED,value:ComplaintStatus.RESOLVED.toString()}
+       ],
+       default:ComplaintStatus.PENDING,
+       label:"Status",
+       onChange(value,state) {
+        if(value)
+        {
+          setFilters({...filters,status:value as ComplaintStatus})
+        }
+        
+       }
+       
+    }
+  ]
+  
+const {data:complaints , isFetching} = useApiGet<IComplaint[]>(`/aggregate/dashboard/complaints`,{params:getParams({...debounced})},{
+  queryKey:["dashboard-complaints",debounced]
+})
   return (
-    <div className="min-h-screen bg-gray-50 p-6 space-y-6">
+   <>
+  
+     <div className="min-h-screen bg-gray-50 p-6 space-y-6">
       {/* Header */}
       <div className="flex justify-between items-center">
         <h1 className="text-2xl font-bold flex items-center gap-2">
           <AlertTriangle className="text-red-600" size={24} /> Complaints
         </h1>
         {/* Raise Complaint Button + Modal */}
-        <Dialog>
+        <Dialog open={open} onOpenChange={setIsOpen}>
           <DialogTrigger asChild>
             <Button className="bg-red-600 hover:bg-red-700">Raise Complaint</Button>
           </DialogTrigger>
@@ -71,11 +150,22 @@ export default function ComplaintPage() {
 
       {/* Complaints List */}
       <div className="space-y-4">
+        <div>
+          {/* Filter Box */}
+          <CustomForm fields={filterFormFields} onSubmit={(data)=>{console.log(data)}}  schema={z.object({
+            title:z.string(),
+            status:z.enum([ComplaintStatus.ACTIVE,ComplaintStatus.PENDING,ComplaintStatus.RESOLVED]).optional()
+          })}/>
+        </div>
+       <>
+       {
+        <>
+        {!complaints || isFetching ? <PageLoader/> :  <>
         {complaints.map((c) => (
           <Card key={c.id} className="shadow rounded-2xl">
             <CardHeader className="flex flex-row justify-between items-center">
               <CardTitle className="flex items-center gap-2 text-lg">
-                {c.status === "Resolved" ? (
+                {c.status === ComplaintStatus.RESOLVED ? (
                   <CheckCircle size={18} className="text-green-600" />
                 ) : (
                   <AlertTriangle size={18} className="text-red-600" />
@@ -83,19 +173,25 @@ export default function ComplaintPage() {
                 {c.title}
               </CardTitle>
               <Badge
-                variant={c.status === "Resolved" ? "secondary" : "destructive"}
+                variant={c.status === ComplaintStatus.RESOLVED ? "secondary" : "destructive"}
                 className="text-xs"
               >
                 {c.status}
               </Badge>
             </CardHeader>
             <CardContent>
-              <p className="text-gray-700 text-sm">{c.desc}</p>
-              <p className="text-xs text-gray-500 mt-2">Raised on {c.date}</p>
+              <p className="text-gray-700 text-sm">{c.description}</p>
+              <p className="text-xs text-gray-500 mt-2">Raised on {format(c.createdAt,"PPP")}</p>
             </CardContent>
           </Card>
         ))}
+        </>}
+        </>
+       }
+       </>
       </div>
     </div>
+ 
+   </>
   );
 }
