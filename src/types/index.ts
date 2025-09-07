@@ -12,6 +12,7 @@ export interface User {
   email: string;
   avatar?: string;
   createdAt: string;
+  role?:"user"|"pg"
 }
 export interface AuthState {
   user: User | null;
