@@ -200,3 +200,25 @@ export interface IComplaint{
     tenant:Partial<ITenant> | ITenant | string
     pg:Partial<IPg>|IPg | string
 }
+
+export interface PgDashboardResponse {
+  rooms: {
+    total_rooms: number;          // total number of rooms
+    total_free_rooms: number;     // total rooms with at least one free bed
+    total_free_beds: number;      // count of all free beds
+    no_of_beds: number;           // total beds (occupied + free)
+    occupied_beds: number;        // total occupied beds
+    occupancy_percent: number;    // occupancy % (0-100)
+  };
+  tenants: number;                // total tenants
+  collection: number | null;      // rent collection amount (could be null)
+  pending_bookings: number;       // number of pending booking requests
+  occupancy_trend: OccupancyTrend[];
+}
+
+export interface OccupancyTrend {
+  month: string;          // ISO date string (e.g. "2025-08-31T18:30:00.000Z")
+  no_of_beds: number;     // total beds that month
+  occupied_beds: number;  // occupied beds that month
+  occupancy_rate: number; // occupancy rate % that month
+}

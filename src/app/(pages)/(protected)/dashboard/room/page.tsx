@@ -5,6 +5,8 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { usePg } from "@/context/PgContext";
+import { useApiGet } from "@/hooks/api_hooks";
 
 const initialRooms = [
   {
@@ -26,7 +28,12 @@ const initialRooms = [
 export default function RoomPage() {
   const [floors, setFloors] = useState(initialRooms);
   const [selectedRoom, setSelectedRoom] = useState<any>(null);
-
+const {currentPg}=usePg()
+const {data} = useApiGet<any>(`/aggregate/pg/dashboard/room`,{params:{
+  pg_id:currentPg?.id
+}},{
+  queryKey:["pg-dashboard-room",currentPg?.id]
+})
   return (
     <div className="p-6">
       <div className="flex justify-between items-center mb-6">

@@ -4,6 +4,12 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { useState } from "react";
+import { useApiGet } from "@/hooks/api_hooks";
+import { IBooking, Page } from "@/types";
+import { usePg } from "@/context/PgContext";
+import { PaginatedView } from "@/components/common/PaginatedView";
+import PageLoader from "@/components/common/Loader";
+import { format } from "date-fns";
 
 const bookings = [
   {
@@ -37,12 +43,13 @@ const bookings = [
 
 export default function AdminBookingsPage() {
   const [search, setSearch] = useState("");
-
-  const filtered = bookings.filter(
-    (b) =>
-      b.tenant.toLowerCase().includes(search.toLowerCase()) ||
-      b.room.includes(search)
-  );
+  const [page,setPage]=useState(1);
+  const {currentPg} = usePg()
+  const{data:bookingPage,isFetching} = useApiGet<Page<IBooking>>(`/aggregate/pg/dashboard/bookings`,{params:{
+    pg_id:currentPg?.id
+  }},{
+    queryKey:["pg-dashboard-bookings",currentPg?.id]
+  })
 
   return (
     <div className="p-6">
@@ -60,39 +67,43 @@ export default function AdminBookingsPage() {
       </div>
 
       {/* Bookings Table */}
-      <Card>
+     <>
+     {!bookingPage || isFetching ? <PageLoader/> :
+     (<PaginatedView page={bookingPage} onPageChange={()=>{}}>
+
+       <Card>
         <CardContent className="p-4">
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Tenant</TableHead>
+                
                 <TableHead>Room</TableHead>
-                <TableHead>Move-in Date</TableHead>
-                <TableHead>Duration (months)</TableHead>
-                <TableHead>Deposit (₹)</TableHead>
+                {/* <TableHead>Move-in Date</TableHead> */}
+                <TableHead>Date</TableHead>
+                
                 <TableHead>Status</TableHead>
                 <TableHead>Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-              {filtered.map((b) => (
+              {bookingPage.data.map((b) => (
                 <TableRow key={b.id}>
-                  <TableCell>{b.tenant}</TableCell>
-                  <TableCell>{b.room}</TableCell>
-                  <TableCell>{b.moveIn}</TableCell>
-                  <TableCell>{b.months}</TableCell>
-                  <TableCell>{b.deposit}</TableCell>
+                
+                  <TableCell>{b.roomId}</TableCell>
+                  {/* <TableCell>{b.moveIn}</TableCell> */}
+                  <TableCell>{format(b.createdAt,"PPP")}</TableCell>
+                  
                   <TableCell>
                     <span
                       className={`px-2 py-1 rounded text-xs ${
-                        b.status === "active"
+                        b.bookingStatus === "completed"
                           ? "bg-green-100 text-green-700"
-                          : b.status === "upcoming"
+                          : b.bookingStatus === "success"
                           ? "bg-blue-100 text-blue-700"
                           : "bg-gray-200 text-gray-600"
                       }`}
                     >
-                      {b.status}
+                      {b.bookingStatus}
                     </span>
                   </TableCell>
                   <TableCell>
@@ -111,6 +122,8 @@ export default function AdminBookingsPage() {
           </Table>
         </CardContent>
       </Card>
+     </PaginatedView>)}
+     </>
     </div>
   );
 }

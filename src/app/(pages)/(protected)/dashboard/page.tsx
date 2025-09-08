@@ -1,78 +1,90 @@
-"use client"
+"use client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, LineChart, Line } from "recharts";
-
-const summaryData = {
-  totalRooms: 50,
-  occupiedRooms: 42,
-  pendingComplaints: 7,
-  pendingRent: 120000,
-  totalTenants: 45,
-};
-
-const revenueData = [
-  { month: "Jun", collected: 200000, pending: 40000 },
-  { month: "Jul", collected: 220000, pending: 30000 },
-  { month: "Aug", collected: 180000, pending: 60000 },
-  { month: "Sep", collected: 240000, pending: 20000 },
-];
-
-const occupancyTrend = [
-  { month: "Apr", occupancy: 75 },
-  { month: "May", occupancy: 80 },
-  { month: "Jun", occupancy: 85 },
-  { month: "Jul", occupancy: 82 },
-  { month: "Aug", occupancy: 88 },
-  { month: "Sep", occupancy: 84 },
-];
-
-const recentPayments = [
-  { id: 1, tenant: "Rahul Sharma", amount: 8000, status: "paid" },
-  { id: 2, tenant: "Priya Singh", amount: 12000, status: "pending" },
-  { id: 3, tenant: "Aman Gupta", amount: 6000, status: "paid" },
-];
-
-const latestComplaints = [
-  { id: 1, tenant: "Rahul Sharma", issue: "Plumbing", status: "pending" },
-  { id: 2, tenant: "Priya Singh", issue: "Electricity", status: "in_progress" },
-  { id: 3, tenant: "Aman Gupta", issue: "Cleanliness", status: "resolved" },
-];
-
-const upcomingDues = [
-  { id: 1, tenant: "Vikas Mehta", room: "102", due: "2025-09-10", amount: 6000 },
-  { id: 2, tenant: "Sneha Patel", room: "203", due: "2025-09-12", amount: 7000 },
-];
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  Tooltip,
+  ResponsiveContainer,
+  LineChart,
+  Line,
+} from "recharts";
+import { usePg } from "@/context/PgContext";
+import PageLoader from "@/components/common/Loader";
+import { useApiGet } from "@/hooks/api_hooks";
+import { PgDashboardResponse } from "@/types";
 
 export default function HomeOverview() {
+  const { currentPg, isLoading } = usePg();
+
+  const { data, isLoading: dashboardLoading } = useApiGet<PgDashboardResponse>(
+    `/aggregate/pg/dashboard`,
+    { params: { pg_id: currentPg?.id } },
+    { queryKey: ["pg-dashboard", currentPg?.id], enabled: !!currentPg?.id }
+  );
+
+  if (isLoading || dashboardLoading) return <PageLoader />;
+
+  const rooms:any = data?.rooms ?? {};
+  const tenants = data?.tenants ?? 0;
+  const collection = data?.collection ?? 0;
+  const pendingBookings = data?.pending_bookings ?? 0;
+  const occupancyTrend = data?.occupancy_trend ?? [];
+
   return (
     <div className="p-6 space-y-8">
       {/* KPI Summary */}
       <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
         <Card>
-          <CardHeader><CardTitle>Total Rooms</CardTitle></CardHeader>
-          <CardContent><p className="text-2xl font-bold">{summaryData.totalRooms}</p></CardContent>
-        </Card>
-        <Card>
-          <CardHeader><CardTitle>Occupied Rooms</CardTitle></CardHeader>
+          <CardHeader>
+            <CardTitle>Total Rooms</CardTitle>
+          </CardHeader>
           <CardContent>
-            <p className="text-2xl font-bold">{summaryData.occupiedRooms}</p>
+            <p className="text-2xl font-bold">{rooms.total_rooms}</p>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>Occupied Beds</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-2xl font-bold">{rooms.occupied_beds}</p>
             <p className="text-sm text-gray-500">
-              {Math.round((summaryData.occupiedRooms / summaryData.totalRooms) * 100)}% Occupancy
+              {Number(rooms.occupancy_percent).toFixed(1)}% Occupancy
             </p>
           </CardContent>
         </Card>
+
         <Card>
-          <CardHeader><CardTitle>Total Tenants</CardTitle></CardHeader>
-          <CardContent><p className="text-2xl font-bold">{summaryData.totalTenants}</p></CardContent>
+          <CardHeader>
+            <CardTitle>Total Tenants</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-2xl font-bold">{tenants}</p>
+          </CardContent>
         </Card>
+
         <Card>
-          <CardHeader><CardTitle>Pending Complaints</CardTitle></CardHeader>
-          <CardContent><p className="text-2xl font-bold">{summaryData.pendingComplaints}</p></CardContent>
+          <CardHeader>
+            <CardTitle>Pending Bookings</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-2xl font-bold">{pendingBookings}</p>
+          </CardContent>
         </Card>
+
         <Card>
-          <CardHeader><CardTitle>Pending Rent</CardTitle></CardHeader>
-          <CardContent><p className="text-2xl font-bold">₹{summaryData.pendingRent.toLocaleString()}</p></CardContent>
+          <CardHeader>
+            <CardTitle>Total Collection</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-2xl font-bold">
+              ₹{Number(collection).toLocaleString()}
+            </p>
+          </CardContent>
         </Card>
       </div>
 
@@ -87,11 +99,14 @@ export default function HomeOverview() {
 
       {/* Charts */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {/* You didn’t share revenue trend API structure, keeping placeholder */}
         <Card>
-          <CardHeader><CardTitle>Revenue Overview</CardTitle></CardHeader>
+          <CardHeader>
+            <CardTitle>Revenue Overview</CardTitle>
+          </CardHeader>
           <CardContent>
             <ResponsiveContainer width="100%" height={250}>
-              <BarChart data={revenueData}>
+              <BarChart data={[]}>
                 <XAxis dataKey="month" />
                 <YAxis />
                 <Tooltip />
@@ -103,61 +118,31 @@ export default function HomeOverview() {
         </Card>
 
         <Card>
-          <CardHeader><CardTitle>Occupancy Trend</CardTitle></CardHeader>
+          <CardHeader>
+            <CardTitle>Occupancy Trend</CardTitle>
+          </CardHeader>
           <CardContent>
             <ResponsiveContainer width="100%" height={250}>
-              <LineChart data={occupancyTrend}>
+              <LineChart
+                data={occupancyTrend.map((d: any) => ({
+                  month: new Date(d.month).toLocaleDateString("en-US", {
+                    month: "short",
+                    year: "2-digit",
+                  }),
+                  occupancy: Number(d.occupancy_rate),
+                }))}
+              >
                 <XAxis dataKey="month" />
                 <YAxis />
                 <Tooltip />
-                <Line type="monotone" dataKey="occupancy" stroke="#3b82f6" strokeWidth={2} />
+                <Line
+                  type="monotone"
+                  dataKey="occupancy"
+                  stroke="#3b82f6"
+                  strokeWidth={2}
+                />
               </LineChart>
             </ResponsiveContainer>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Activity Sections */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <Card>
-          <CardHeader><CardTitle>Recent Payments</CardTitle></CardHeader>
-          <CardContent>
-            <ul className="space-y-2 text-sm">
-              {recentPayments.map((p) => (
-                <li key={p.id} className="flex justify-between">
-                  <span>{p.tenant}</span>
-                  <span>₹{p.amount} — {p.status}</span>
-                </li>
-              ))}
-            </ul>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader><CardTitle>Latest Complaints</CardTitle></CardHeader>
-          <CardContent>
-            <ul className="space-y-2 text-sm">
-              {latestComplaints.map((c) => (
-                <li key={c.id} className="flex justify-between">
-                  <span>{c.tenant} ({c.issue})</span>
-                  <span>{c.status}</span>
-                </li>
-              ))}
-            </ul>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader><CardTitle>Upcoming Dues</CardTitle></CardHeader>
-          <CardContent>
-            <ul className="space-y-2 text-sm">
-              {upcomingDues.map((d) => (
-                <li key={d.id} className="flex justify-between">
-                  <span>{d.tenant} (Room {d.room})</span>
-                  <span>₹{d.amount} — {d.due}</span>
-                </li>
-              ))}
-            </ul>
           </CardContent>
         </Card>
       </div>
