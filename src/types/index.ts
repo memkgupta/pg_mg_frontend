@@ -188,9 +188,14 @@ export interface ITenant{
 
   createdAt: Date;
   updatedAt: Date;
-
+  status:ITenantStatus;
   moveInDate:Date;
 
+}
+export enum ITenantStatus{
+  PENDING ,
+  ACTIVE,
+  LEFT 
 }
 export interface IComplaint{
       id:string;

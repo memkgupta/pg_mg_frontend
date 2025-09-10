@@ -1,7 +1,7 @@
 "use client"
 import PageLoader from '@/components/common/Loader'
 import { PaginatedView } from '@/components/common/PaginatedView'
-import CreateTenantModal from '@/components/features/dashboard/tenants/AddTenant'
+import CreateTenantModal from '@/components/features/dashboard/tenants/add-tenant/AddTenant'
 import { Button } from '@/components/ui/button'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import CustomForm from '@/components/utils/form_builder/form'
@@ -10,7 +10,7 @@ import { useCurrentPg } from '@/context/CurrentPgContext'
 import { usePg } from '@/context/PgContext'
 import { useApiGet } from '@/hooks/api_hooks'
 import { parseParams } from '@/lib/utils'
-import { ITenant, Page } from '@/types'
+import { ITenant, ITenantStatus, Page } from '@/types'
 import { format } from 'date-fns'
 import Link from 'next/link'
 import React, { useState } from 'react'
@@ -103,7 +103,7 @@ const Tenants = () => {
                   <TableCell>{t.name}</TableCell>
                   <TableCell>{t.phoneNumber}</TableCell>
                   <TableCell>{t.roomId}</TableCell>
-                  <TableCell>{format(t.moveInDate,"PPP")}</TableCell>
+                  <TableCell>{t.moveInDate && format(t.moveInDate,"PPP")}</TableCell>
                   <TableCell>{format(t.createdAt,"PPP")}</TableCell>
                   
                   <TableCell>
@@ -115,7 +115,7 @@ const Tenants = () => {
                           : "bg-gray-200 text-gray-600"
                       }`}
                     >
-                      {t.isActive}
+                      {ITenantStatus[t.status]}
                     </span>
                   </TableCell>
                   <TableCell>
