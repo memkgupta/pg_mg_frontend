@@ -24,11 +24,12 @@ const PgProvider = ({children}:{children:React.ReactNode}) => {
     const[isLoading,setIsLoading]=useState(true);
     const router = useRouter()
     useEffect(()=>{
-        if(!isUserLoading)
+        if(!isUserLoading )
         {
               if(!user || user.role!="pg")
   {
-    router.replace("/not-found");
+    console.log(user);
+    router.replace("/not-found")
   }
   const initializePgState = async()=>{
     const res = await api.get<APIResponse<Partial<IPg>[]>>(`/pg/my-pgs`,{},)

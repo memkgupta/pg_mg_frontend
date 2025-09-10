@@ -11,7 +11,7 @@ export const loginSchema = z.object({
 export type LoginSchema = z.infer<typeof loginSchema>;
 export const registerSchema = z
   .object({
-   username: z
+   name: z
       .string()
       .min(1, "Username is required")
       .max(50, "Username too long"),

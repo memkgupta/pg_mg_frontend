@@ -15,8 +15,7 @@ export default function AccountHomePage() {
     const {data:dashboard,isFetching } = useApiGet<IDashboard>(`/aggregate/dashboard`,{},{
     queryKey:["account-home-page"]
   });
-  
-  // const {data} =
+
   return (
 <>
 {
@@ -26,7 +25,7 @@ export default function AccountHomePage() {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         
         {/* Current PG Details */}
-        <Card className="md:col-span-2 shadow-lg rounded-2xl">
+       {dashboard.pg && <Card className="md:col-span-2 shadow-lg rounded-2xl">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Bed size={20} /> Current PG
@@ -38,10 +37,10 @@ export default function AccountHomePage() {
             <p><strong>Rent:</strong> {dashboard.pg.rent}/ month</p>
             <p><strong>Address:</strong> {dashboard.pg.address}</p>
           </CardContent>
-        </Card>
+        </Card>}
 
         {/* Notification */}
-        <Card className="shadow-lg rounded-2xl border border-yellow-300 bg-yellow-50">
+       {dashboard.rent && <Card className="shadow-lg rounded-2xl border border-yellow-300 bg-yellow-50">
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-yellow-700">
               <CalendarDays size={20} /> Upcoming Due
@@ -52,7 +51,7 @@ export default function AccountHomePage() {
             <p><strong>Date:</strong> {format(dashboard.rent.date,"PPP")}</p>
             <p className="text-red-600 font-medium">Status: {dashboard.rent.status}</p>
           </CardContent>
-        </Card>
+        </Card>}
       </div>
 
       {/* Bottom Section */}

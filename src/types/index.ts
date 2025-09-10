@@ -29,7 +29,7 @@ export interface LoginCredentials {
 }
 
 export interface RegisterCredentials extends LoginCredentials {
-  username: string;
+  name: string;
 }
 
 export interface AuthTokens {
@@ -197,7 +197,7 @@ export interface IComplaint{
     updatedAt:Date;
     status:ComplaintStatus;
     description:string;
-    tenant:Partial<ITenant> | ITenant | string
+    tenant:Partial<ITenant> 
     pg:Partial<IPg>|IPg | string
 }
 

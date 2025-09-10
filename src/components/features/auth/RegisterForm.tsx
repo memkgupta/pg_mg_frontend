@@ -7,20 +7,27 @@ import { registerSchema, RegisterSchema } from "@/schemas/auth.schema";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { useAuth } from "@/context/AuthContext";
+import { useRouter } from "next/navigation";
 
 export function RegisterForm() {
   const form = useForm<RegisterSchema>({
     resolver: zodResolver(registerSchema),
     defaultValues: {
-      username: "",
+      name: "",
       email: "",
       password: "",
       confirmPassword: "",
     },
   });
-
-  const onSubmit = (values: RegisterSchema) => {
-    console.log("Register data", values);
+  const router = useRouter()
+  const {register} = useAuth()
+  const onSubmit = async(values: RegisterSchema) => {
+   const success =await register(values);
+   if(success)
+   {
+    router.replace("/account")
+   }
   };
 
   return (
@@ -28,7 +35,7 @@ export function RegisterForm() {
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
         <FormField
           control={form.control}
-         name="username"
+         name="name"
           render={({ field }) => (
             <FormItem>
               <FormLabel>Name</FormLabel>

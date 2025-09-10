@@ -28,7 +28,9 @@ export default function RoomPage() {
     <>
     {
      !room || isFetching ? (<PageLoader/>) :(
-        <div className="min-h-screen bg-gray-50 p-6 space-y-6">
+      <>
+    {
+      Object.keys(room).length == 0 ? "No Room":(  <div className="min-h-screen bg-gray-50 p-6 space-y-6">
       {/* Header */}
       <h1 className="text-2xl font-bold flex items-center gap-2">
         <Bed size={24} className="text-blue-600" /> My Room
@@ -41,10 +43,10 @@ export default function RoomPage() {
           <CardTitle>Room Details</CardTitle>
         </CardHeader>
         <CardContent className="space-y-2 text-gray-700">
-          <p><strong>PG Name:</strong> {room.roomDetails.pg?.name}</p>
-          <p><strong>Room No:</strong> {room.roomDetails.roomNumber}</p>
-          <p><strong>Type:</strong> {room.roomDetails.category?.name}</p>
-          <p><strong>Rent:</strong> {room.roomDetails.category?.baseRent} / month</p>
+          <p><strong>PG Name:</strong> {room.roomDetails?.pg?.name}</p>
+          <p><strong>Room No:</strong> {room.roomDetails?.roomNumber}</p>
+          <p><strong>Type:</strong> {room.roomDetails?.category?.name}</p>
+          <p><strong>Rent:</strong> {room.roomDetails?.category?.baseRent} / month</p>
         </CardContent>
       </Card>
 
@@ -56,7 +58,7 @@ export default function RoomPage() {
         </CardHeader>
         <CardContent>
           <ul className="space-y-2">
-            {room.roomMates.map((mate,index) => (
+            {room.roomMates?.map((mate,index) => (
               <li
                 key={index}
                 className="flex justify-between items-center p-2 rounded-lg bg-gray-100"
@@ -76,7 +78,7 @@ export default function RoomPage() {
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {room.roomDetails.pg.amenities?.map((f) => (
+            {room.roomDetails?.pg.amenities?.map((f) => (
               <div
                 key={f}
                 className="flex flex-col items-center justify-center p-4 border rounded-xl shadow-sm bg-white"
@@ -100,7 +102,9 @@ export default function RoomPage() {
           <p>🔥 Cooking inside rooms not permitted</p>
         </CardContent>
       </Card>
-    </div>
+    </div>)
+    }
+      </>
       )
     }
     </>

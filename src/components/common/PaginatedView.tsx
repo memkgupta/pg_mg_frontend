@@ -18,7 +18,7 @@ interface PaginatedViewProps<T> {
 export function PaginatedView<T>({ page, onPageChange, children }: PaginatedViewProps<T>) {
   return (
     <div className="flex flex-col min-h-screen"> 
-     <p className="text-3xl font-extrabold text-black">Total {page.totalResults} PGs found</p>
+     <p className="text-3xl font-extrabold text-black">Total {page.totalResults} Results found</p>
       <div className="flex-1 p-4">{children}</div>
 
     

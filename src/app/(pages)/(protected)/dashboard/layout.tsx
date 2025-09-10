@@ -4,6 +4,7 @@ import PgDashboardSidebar from '@/components/features/dashboard/PgDashboardSideb
 import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar'
 import { Toaster } from '@/components/ui/sonner'
 import { useAuth } from '@/context/AuthContext'
+import { CurrentPgProvider } from '@/context/CurrentPgContext'
 import PgProvider from '@/context/PgContext'
 import { useRouter } from 'next/navigation'
 import React, { useEffect } from 'react'
@@ -22,7 +23,10 @@ const PgDashboardLayout = ({children}:{children:React.ReactNode}) => {
             <PgDashboardSidebar/>
             <main className='w-full mt-20'>
                 <SidebarTrigger className='fixed'/>
-{children}
+                <CurrentPgProvider>
+                  {children}
+                </CurrentPgProvider>
+
 
             </main>
              

@@ -114,7 +114,9 @@ const {data:complaints , isFetching} = useApiGet<IComplaint[]>(`/aggregate/dashb
   return (
    <>
   
-     <div className="min-h-screen bg-gray-50 p-6 space-y-6">
+  {!complaints || isFetching? <PageLoader/> :  (
+    <>
+ <div className="min-h-screen bg-gray-50 p-6 space-y-6">
       {/* Header */}
       <div className="flex justify-between items-center">
         <h1 className="text-2xl font-bold flex items-center gap-2">
@@ -191,6 +193,8 @@ const {data:complaints , isFetching} = useApiGet<IComplaint[]>(`/aggregate/dashb
        </>
       </div>
     </div>
+    </>
+  )}
  
    </>
   );

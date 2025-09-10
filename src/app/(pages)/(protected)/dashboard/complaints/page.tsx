@@ -5,56 +5,34 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { usePg } from "@/context/PgContext";
+import { useApiGet } from "@/hooks/api_hooks";
+import { ComplaintStatus, IComplaint, Page } from "@/types";
+import { PaginatedView } from "@/components/common/PaginatedView";
+import PageLoader from "@/components/common/Loader";
+import { format } from "date-fns";
 
-const initialComplaints = [
-  {
-    id: 1,
-    tenant: "Rahul Sharma",
-    room: "101",
-    issue: "Plumbing",
-    description: "Water leakage in bathroom.",
-    status: "pending",
-    date: "2025-09-01",
-  },
-  {
-    id: 2,
-    tenant: "Priya Singh",
-    room: "202",
-    issue: "Electricity",
-    description: "Fan not working.",
-    status: "in_progress",
-    date: "2025-09-03",
-  },
-  {
-    id: 3,
-    tenant: "Aman Gupta",
-    room: "301",
-    issue: "Cleanliness",
-    description: "Room cleaning not done for 3 days.",
-    status: "resolved",
-    date: "2025-09-05",
-  },
-];
+
 
 export default function ComplaintPage() {
-  const [complaints, setComplaints] = useState(initialComplaints);
-  const [search, setSearch] = useState("");
-  const [selectedComplaint, setSelectedComplaint] = useState<any>(null);
 
-  const filteredComplaints = complaints.filter(
-    (c) =>
-      c.tenant.toLowerCase().includes(search.toLowerCase()) ||
-      c.room.includes(search) ||
-      c.issue.toLowerCase().includes(search.toLowerCase())
-  );
+  const [search, setSearch] = useState("");
+
+
+ 
 
   const updateStatus = (id: number, newStatus: string) => {
-    setComplaints((prev) =>
-      prev.map((c) => (c.id === id ? { ...c, status: newStatus } : c))
-    );
-    setSelectedComplaint((prev: any) => ({ ...prev, status: newStatus }));
+  
   };
-
+const {currentPg} = usePg()
+const[page,setPage] = useState(1);
+const {data:complaintsPage,isFetching} = useApiGet<Page<IComplaint>>(`/aggregate/pg/dashboard/complaints`,{
+  params:{
+    pg_id:currentPg?.id
+  }
+},{
+  queryKey:["pg-dashboard-complaints",currentPg?.id]
+})
   return (
     <div className="p-6">
       <div className="flex justify-between items-center mb-6">
@@ -66,7 +44,8 @@ export default function ComplaintPage() {
           onChange={(e) => setSearch(e.target.value)}
         />
       </div>
-
+   {
+   !complaintsPage|| isFetching ?<PageLoader/>:( <PaginatedView page={complaintsPage} onPageChange={setPage} >
       <Table>
         <TableHeader>
           <TableRow>
@@ -80,18 +59,18 @@ export default function ComplaintPage() {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {filteredComplaints.map((c) => (
+          {complaintsPage.data.map((c) => (
             <TableRow key={c.id}>
               <TableCell>{c.id}</TableCell>
-              <TableCell>{c.tenant}</TableCell>
-              <TableCell>{c.room}</TableCell>
-              <TableCell>{c.issue}</TableCell>
+              <TableCell>{c.tenant?.name}</TableCell>
+              {/* <TableCell>{c.room}</TableCell> */}
+              <TableCell>{c.title}</TableCell>
               <TableCell>
                 <Badge
                   className={
                     c.status === "pending"
                       ? "bg-yellow-200 text-yellow-800"
-                      : c.status === "in_progress"
+                      : c.status === ComplaintStatus.ACTIVE
                       ? "bg-blue-200 text-blue-800"
                       : "bg-green-200 text-green-800"
                   }
@@ -99,9 +78,9 @@ export default function ComplaintPage() {
                   {c.status}
                 </Badge>
               </TableCell>
-              <TableCell>{c.date}</TableCell>
+              <TableCell>{format(c.createdAt,"PPP")}</TableCell>
               <TableCell>
-                <Dialog onOpenChange={(open) => !open && setSelectedComplaint(null)}>
+                {/* <Dialog onOpenChange={(open) => !open && setSelectedComplaint(null)}>
                   <DialogTrigger asChild>
                     <Button
                       variant="outline"
@@ -147,12 +126,15 @@ export default function ComplaintPage() {
                       </>
                     )}
                   </DialogContent>
-                </Dialog>
+                </Dialog> */}
               </TableCell>
             </TableRow>
           ))}
         </TableBody>
       </Table>
+    </PaginatedView>)
+   }
+      
     </div>
   );
 }
