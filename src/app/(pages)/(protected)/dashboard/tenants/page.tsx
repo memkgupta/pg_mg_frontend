@@ -1,6 +1,7 @@
 "use client"
 import PageLoader from '@/components/common/Loader'
 import { PaginatedView } from '@/components/common/PaginatedView'
+import CreateTenantModal from '@/components/features/dashboard/tenants/AddTenant'
 import { Button } from '@/components/ui/button'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import CustomForm from '@/components/utils/form_builder/form'
@@ -75,7 +76,10 @@ const Tenants = () => {
               schema={tenantFilterFormSchema}
             />
           </div>
-
+            <div className='flex justify-end pr-2'>
+                {/* Add Tenant Modal */}
+                <CreateTenantModal/>
+            </div>
     {
         tenantPage && 
         <PaginatedView page={tenantPage}  onPageChange={(page) => { setParams(params => ({ ...params, page: page })) }}>

@@ -7,7 +7,7 @@ import { cn, parseStyle } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import { FormStyle } from '@/types'
 
-const CustomForm = ({fields,styling,schema,onSubmit}:{fields:FormField[],styling?:FormStyle,schema:ZodTypeAny,onSubmit:(data:any)=>void}) => {
+const CustomForm = ({fields,styling,schema,onSubmit}:{fields:FormField[],styling?:FormStyle,schema:ZodTypeAny,onSubmit?:(data:any)=>void}) => {
     const parsedStyle = parseStyle(styling);
    
   return (

@@ -8,7 +8,7 @@ export const FormContext = createContext<FormContextProps<any>|null>(null);
 interface FormProviderProps<TSchema extends ZodTypeAny> {
   schema: TSchema;
   fields: BaseField<any>[];
-  onSubmit: (data: any) => void;
+  onSubmit?: (data: any) => void;
   styling: {
     container:string,
     button:string
@@ -43,7 +43,10 @@ const states: FieldState[] = fields.map(field => ({
         try {
       const parsed = schema.parse(data)  
           setErrors([]);
-      onSubmit(parsed)
+          if(onSubmit){
+                 onSubmit(parsed)
+          }
+ 
     } catch (err) {
       if (err instanceof ZodError) {
         // convert Zod issues into field errors
@@ -62,9 +65,9 @@ const states: FieldState[] = fields.map(field => ({
     <FormContext.Provider value={{ fields:states, onSubmit, styling,errors,setErrors }}>
       <div className={cn(styling?.container,`w-full`,'place-items-center')}>
    {children}
-   <div className='p-1 w-full mt-4'>
+   {onSubmit && <div className='p-1 w-full mt-4'>
       <Button className={cn(styling?.button,`w-full`)}  onClick={()=>{handleSubmit(states)}}>Submit</Button>
-   </div>
+   </div>}
  
       </div>
 

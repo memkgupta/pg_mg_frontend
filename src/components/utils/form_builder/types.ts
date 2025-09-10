@@ -1,7 +1,7 @@
 import { z, ZodTypeAny } from "zod"
 
 export interface FormContextProps<T extends ZodTypeAny>{
-    onSubmit:(formData:z.infer<T> )=>void,
+    onSubmit?:(formData:z.infer<T> )=>void,
     styling?:React.CSSProperties,
     fields:FieldState[],
     errors:{fieldId:string,message:string}[],
