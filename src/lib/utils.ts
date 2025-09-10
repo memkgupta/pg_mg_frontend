@@ -1,3 +1,4 @@
+import { FormField } from "@/components/utils/form_builder/types"
 import { FormStyle } from "@/types"
 import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
@@ -50,4 +51,25 @@ export function parseStyle(style: Partial<FormStyle> = {}) {
     container: `grid ${gapClass} ${colClasses} ${paddingClass} ${marginClass}`,
     button: `${buttonClass} px-4 py-2 rounded`,
   }
+}
+
+export function parseParams(data:Record<string, any>,formfields:FormField[]){
+const parsedParams =   Object.entries(data).reduce<Record<string, any>>(
+           (acc, [key, value]) => {
+             const suffix = formfields.find(field => field.fieldId === key)?.suffix
+             if (suffix) {
+               if(suffix=="@>" && Array.isArray(value))
+               {
+                   acc[key+suffix]=(value.join(",")).toString()
+               }
+               else{
+       acc[ key+suffix ] = value
+               }
+               
+             }
+             return acc
+           },
+           {}
+         )
+         return parseParams;
 }

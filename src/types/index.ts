@@ -176,6 +176,7 @@ export interface ITenant{
   // Replace relations with IDs
   roomId: string;
   rentId?: string;
+  room?:Partial<IRoom>;
 
   adhaar?: string;
   photo: string;
@@ -188,6 +189,7 @@ export interface ITenant{
   createdAt: Date;
   updatedAt: Date;
 
+  moveInDate:Date;
 
 }
 export interface IComplaint{

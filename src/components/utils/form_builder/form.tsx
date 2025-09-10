@@ -13,11 +13,13 @@ const CustomForm = ({fields,styling,schema,onSubmit}:{fields:FormField[],styling
   return (
     <div>
         <FormProvider styling={parsedStyle} fields={fields} onSubmit={onSubmit} schema={schema}>
-           
-            {
+         
+               {
                 fields.map(field=>(renderField(field )))
             }
              
+           
+           
            
           
         </FormProvider>

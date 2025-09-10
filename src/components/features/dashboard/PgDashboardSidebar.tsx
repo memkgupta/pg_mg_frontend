@@ -11,7 +11,7 @@ import {
   SidebarHeader,
   SidebarFooter
 } from "@/components/ui/sidebar"
-import { Home, Inbox, Calendar, Search, Settings, CalendarClockIcon, Bed, AlertTriangle, Wallet, ChevronDown } from "lucide-react"
+import { Home, Inbox, Calendar, Search, Settings, CalendarClockIcon, Bed, AlertTriangle, Wallet, ChevronDown, User } from "lucide-react"
 import { IconReservedLine } from '@tabler/icons-react'
 import { cn } from '@/lib/utils'
 import Link from 'next/link'
@@ -22,6 +22,7 @@ const PgDashboardSidebar = () => {
     const items = [
   { title: "Home", url: "/dashboard", icon: Home },
   { title: "Inbox", url: "/dashboard/inbox", icon: Inbox },
+  {title:"Tenants",url:"/dashboard/tenants",icon:User},
   {title:"Bookings",url:"/dashboard/bookings",icon:CalendarClockIcon},
   {title:"Room",url:"/dashboard/room",icon:Bed},
   {title:"Complaints",url:"/dashboard/complaints",icon:AlertTriangle},

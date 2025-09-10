@@ -60,9 +60,9 @@ const states: FieldState[] = fields.map(field => ({
     }
     return (
     <FormContext.Provider value={{ fields:states, onSubmit, styling,errors,setErrors }}>
-      <div className={cn(styling?.container,`w-full`,)}>
+      <div className={cn(styling?.container,`w-full`,'place-items-center')}>
    {children}
-   <div className='p-1 w-full'>
+   <div className='p-1 w-full mt-4'>
       <Button className={cn(styling?.button,`w-full`)}  onClick={()=>{handleSubmit(states)}}>Submit</Button>
    </div>
  
