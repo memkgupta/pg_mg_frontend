@@ -15,6 +15,7 @@ import TenantRoomInfo from '@/components/features/dashboard/tenants/details/Tena
 import TenantMetadata from '@/components/features/dashboard/tenants/details/TenantMetaData'
 import TenantActions from '@/components/features/dashboard/tenants/details/TenantActions'
 import { format } from 'date-fns'
+import TenantVerificationModal from '@/components/features/dashboard/tenants/verification/VerifyTenantModal'
 const ViewTenant = ({params}:{params:{id:string}}) => {
     const {currentPg} = usePg()
     const {data:tenant,isFetching} = useApiGet<ITenant>(`/pg/admin/tenant/${params.id}`,{
@@ -32,7 +33,7 @@ const ViewTenant = ({params}:{params:{id:string}}) => {
             (
               tenant &&  <>
                     {
-                        tenant.status === ITenantStatus.PENDING &&
+                        !tenant.verification &&
                         <div className='flex justify-end'>
                             <Alert variant={"destructive"} className='bg-yellow-200 mx-5 w-1/2'>
                             <AlertTriangleIcon/>
@@ -41,7 +42,23 @@ const ViewTenant = ({params}:{params:{id:string}}) => {
                                 <span>
                                     Verification of tenant is pending ..
                                 </span>
-                                <Button>Verify now</Button>
+                               <TenantVerificationModal tenant={tenant}/>
+                            </AlertDescription>
+                            
+                        </Alert>
+                        </div>
+                    }
+                      {
+                        tenant.verification && tenant.status === ITenantStatus.PENDING &&
+                        <div className='flex justify-end'>
+                            <Alert variant={"destructive"} className='bg-yellow-200 mx-5 w-1/2'>
+                            <AlertTriangleIcon/>
+                            <AlertTitle>Finalise Tenant</AlertTitle>
+                            <AlertDescription className='flex justify-between items-center'>
+                                <span>
+                                    Tenant is not finalised yet ...
+                                </span>
+                               <TenantVerificationModal tenant={tenant}/>
                             </AlertDescription>
                             
                         </Alert>

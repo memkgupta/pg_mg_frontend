@@ -50,7 +50,7 @@ export function useApiGet<T>(url:string,apiOptions:AxiosRequestConfig,options:Ap
   return getQuery
 }
 
-export function useApiPost<T,D>(url:string,apiOptions:AxiosRequestConfig,data:D,options:ApiMutationOptions<T,D,AxiosError>){
+export function useApiPost<T,D>(url:string,apiOptions:AxiosRequestConfig,options:ApiMutationOptions<T,D,AxiosError>){
  const {
     queryKey,
     onSuccess,

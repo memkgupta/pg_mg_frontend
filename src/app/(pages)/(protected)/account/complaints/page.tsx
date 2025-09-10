@@ -38,10 +38,7 @@ import {useDebounce} from "@uidotdev/usehooks"
 export default function ComplaintPage() {
   const [newComplaint, setNewComplaint] = useState({ title: "", desc: "" });
   const [open,setIsOpen] = useState(false);
-  const mutation = useApiPost<IComplaint,{title:string,description:string}>(`/tenant/complaint`,{},{
-      title:newComplaint.title,
-      description:newComplaint.desc
-    },{queryKey:["dashboard-complaints"],onSuccess:(data)=>{
+  const mutation = useApiPost<IComplaint,{title:string,description:string}>(`/tenant/complaint`,{},{queryKey:["dashboard-complaints"],onSuccess:(data)=>{
       
       toast.success(`Your complaint has been registered`);
         setNewComplaint({ title: "", desc: "" });
