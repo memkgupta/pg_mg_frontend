@@ -1,3 +1,4 @@
+
 import { z, ZodTypeAny } from "zod"
 
 export interface FormContextProps<T extends ZodTypeAny>{
@@ -11,21 +12,23 @@ export interface FieldState<T = any> {
   fieldId: string;
   state: [T, React.Dispatch<React.SetStateAction<T>>];
 }
-export enum FormFieldTypeEnum{
-    RADIO="radio",
-    EMAIL="email",
-    PHONE_NUMBER="phone_number",
-    CHECKBOX="check_box",
-    TEXT="text",
-    RANGE="range",
-    TEXT_AREA="text_area",
-    MULTI_TEXT="multi_text",
-    DATE_RANGE="date_range",
-    CHECKBOX_GROUP="checkbox_group",
-    CUSTOM="custom",
-    SELECT="select",
-
+export enum FormFieldTypeEnum {
+  RADIO = "radio",
+  EMAIL = "email",
+  PHONE_NUMBER = "phone_number",
+  CHECKBOX = "check_box",
+  TEXT = "text",
+  RANGE = "range",
+  TEXT_AREA = "text_area",
+  MULTI_TEXT = "multi_text",
+  DATE_RANGE = "date_range",
+  CHECKBOX_GROUP = "checkbox_group",
+  CUSTOM = "custom",
+  SELECT = "select",
+  IMAGE = "image",
+  MULTI_IMAGE="multi_image"
 }
+
 
 
 export interface BaseField<T> {
@@ -44,6 +47,15 @@ export interface BaseField<T> {
   prefix?: string;
   suffix?: string;
 }
+export type ImageShape = "rect" | "round";
+
+export interface ImageField extends BaseField<string> {
+  fieldType: FormFieldTypeEnum.IMAGE;
+  dimensions?: { width: number; height: number }; // cropping dimensions
+  shape?: ImageShape; // rectangle | round
+  allowCrop?: boolean; // enable/disable cropping
+}
+
 
 // ✅ Range
 export interface RangeField extends BaseField<number[]> {
@@ -133,4 +145,6 @@ export type FormField =
   | TextAreaField
   | MultiTextField
   | EmailField
-  | CustomField;
+  | CustomField
+
+

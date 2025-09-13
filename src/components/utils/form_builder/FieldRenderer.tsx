@@ -11,6 +11,8 @@ import RangeFieldInput from "./fields/RangeFieldInput";
 import { DateRangePicker } from "./fields/DateRangePicker";
 import CheckboxGroupFieldInput from "./fields/CheckBoxGroupInput";
 import ComboBoxFieldInput from "./fields/ComboBoxFieldInput";
+import TextAreaFieldInput from "./fields/TextAreaFieldInput";
+import MultiImageFieldInput from "./fields/TextAreaFieldInput";
 
 
 export function renderField(field: FormField):React.ReactNode {
@@ -36,15 +38,15 @@ export function renderField(field: FormField):React.ReactNode {
       return <RangeFieldInput field={field} />;
     case FormFieldTypeEnum.SELECT:
       return <ComboBoxFieldInput field={field as ComboBoxField}/>
-    // case FormFieldTypeEnum.TEXT_AREA:
-    //   return <TextAreaFieldInput field={field} />;
+    case FormFieldTypeEnum.TEXT_AREA:
+      return <TextAreaFieldInput field={field} />;
 
     case FormFieldTypeEnum.MULTI_TEXT:
       return <MultiTextFieldInput field={field} />;
 
     case FormFieldTypeEnum.DATE_RANGE:
       return <DateRangePicker field={field} />;
-
+  
     // case FormFieldTypeEnum.CUSTOM:
     //   // delegate to a custom renderer function or component
     //   return <CustomFieldRenderer field={field} />;

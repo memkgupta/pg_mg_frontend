@@ -207,6 +207,12 @@ export interface IComplaint{
     tenant:Partial<ITenant> 
     pg:Partial<IPg>|IPg | string
 }
+export interface PgImage{
+    id?:string;
+    url:string;
+    position:number;
+    caption?:string
+}
 
 export interface PgDashboardResponse {
   rooms: {
@@ -229,3 +235,26 @@ export interface OccupancyTrend {
   occupied_beds: number;  // occupied beds that month
   occupancy_rate: number; // occupancy rate % that month
 }
+export interface PgBasicDetails{
+            name:string,
+            description:string
+        }
+        export interface PgAddressDetails{
+            address:string,
+            city:string,
+            state:string,
+            pincode:string
+        }
+        export interface PgOwnerInfo{
+            ownerName:string,
+            contactNumber:string,
+            email:string
+        }
+export interface PgDetails{
+        basic:PgBasicDetails,
+        address:PgAddressDetails,
+        amenities:string[],
+        gallery:PgImage[],
+        owner:PgOwnerInfo
+
+    } 

@@ -3,7 +3,7 @@ import PageLoader from '@/components/common/Loader'
 import { usePg } from '@/context/PgContext'
 import { useApiGet } from '@/hooks/api_hooks'
 import { ITenant, ITenantStatus } from '@/types'
-import React from 'react'
+import React, { useState } from 'react'
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { AlertTriangleIcon, Terminal } from 'lucide-react'
 import { Button } from '@/components/ui/button'
@@ -16,8 +16,10 @@ import TenantMetadata from '@/components/features/dashboard/tenants/details/Tena
 import TenantActions from '@/components/features/dashboard/tenants/details/TenantActions'
 import { format } from 'date-fns'
 import TenantVerificationModal from '@/components/features/dashboard/tenants/verification/VerifyTenantModal'
+import api from '@/services/api'
 const ViewTenant = ({params}:{params:{id:string}}) => {
     const {currentPg} = usePg()
+    const [isFinalising,setIsFinalising] = useState(false);
     const {data:tenant,isFetching} = useApiGet<ITenant>(`/pg/admin/tenant/${params.id}`,{
         params:{
             pg_id:currentPg?.id
@@ -25,7 +27,23 @@ const ViewTenant = ({params}:{params:{id:string}}) => {
     },{
         queryKey:["tenant-details",params.id]
     });
+    const handleFinalise = async()=>{
+        try{
+            setIsFinalising(true)
+            const res = await api.put(`/pg/admin/tenant/finalize/${params.id}`,{},{
+                params:{
+                    pg_id:currentPg?.id
+                }
+            })
+        }
+        catch(error)
+        {
 
+        }
+        finally{
+            setIsFinalising(false)
+        }
+    }
   return (
     <div>
         {
@@ -58,7 +76,7 @@ const ViewTenant = ({params}:{params:{id:string}}) => {
                                 <span>
                                     Tenant is not finalised yet ...
                                 </span>
-                               <TenantVerificationModal tenant={tenant}/>
+                               <Button className='' onClick={handleFinalise}>Finalise</Button>
                             </AlertDescription>
                             
                         </Alert>

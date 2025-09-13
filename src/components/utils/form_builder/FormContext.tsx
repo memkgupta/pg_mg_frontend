@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 export const FormContext = createContext<FormContextProps<any>|null>(null);
 interface FormProviderProps<TSchema extends ZodTypeAny> {
-  schema: TSchema;
+  schema?: TSchema;
   fields: BaseField<any>[];
   onSubmit?: (data: any) => void;
   styling: {
@@ -41,7 +41,7 @@ const states: FieldState[] = fields.map(field => ({
          })
        
         try {
-      const parsed = schema.parse(data)  
+      const parsed = schema!.parse(data)  
           setErrors([]);
           if(onSubmit){
                  onSubmit(parsed)
