@@ -1,8 +1,8 @@
 "use client"
 import PageLoader from '@/components/common/Loader'
 import api from '@/services/api'
-import { PgAddressDetails, PgBasicDetails, PgDetails, PgImage, PgOwnerInfo } from '@/types'
-import React, { createContext, useContext, useState } from 'react'
+import { APIResponse, PgAddressDetails, PgBasicDetails, PgDetails, PgImage, PgOwnerInfo } from '@/types'
+import React, { createContext, useContext, useEffect, useState } from 'react'
 import { useCurrentPg } from './CurrentPgContext'
 import { toast } from 'sonner'
 export interface PgDetailsContextState {
@@ -69,7 +69,9 @@ const PgDetailsProvider = ({children}:{children:React.ReactNode}) => {
   });
 };
 const handleSubmit = async()=>{
-    const res = await api.post(`/pg/admin/details`,{
+   try{
+    setIsSubmitting(true)
+     const res = await api.put(`/pg/admin/details`,{
       basic:details.basic,
       amenities:details.amenities,
       owner:details.owner,
@@ -83,7 +85,36 @@ const handleSubmit = async()=>{
     {
         toast.success("Pg data updated")
     }
+   }
+   catch(error)
+   {
+
+   }
+   finally{
+    setIsSubmitting(false)
+   }
 }
+useEffect(()=>{
+    const init = async()=>{
+        const res = await api.get<APIResponse<PgDetails>>(`/pg/admin/details`,{
+            params:{
+                pg_id:currentPg.id
+            }
+        })
+        
+        if(res.data.success)
+        {
+            const d = res.data.data
+            setDetails(d!)
+            setIsLoading(false);
+
+        }
+        else{
+            setError(res.data.message)
+        }
+    }
+    init()
+},[])
   return (
     <PgDetailsContext.Provider value={{
         details,
@@ -95,7 +126,12 @@ const handleSubmit = async()=>{
         isSubmitting
     }}>
         <>
-        {isLoading || !details ? <PageLoader/> :children}
+        {isLoading || !details ? <PageLoader/> :(
+            <>
+            {
+                error ? error : children
+            }</>
+        )}
         </>
       
     </PgDetailsContext.Provider>

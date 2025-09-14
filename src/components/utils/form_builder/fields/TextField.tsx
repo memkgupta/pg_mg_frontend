@@ -17,6 +17,7 @@ const TextField = ({ field }: { field: BaseField<string> }) => {
   const [value, setValue] = state.state
 
 
+
  const error = errors.find(e => e.fieldId === field.fieldId)
 
   return (

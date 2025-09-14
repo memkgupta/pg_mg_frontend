@@ -18,7 +18,7 @@ export function ImageGrid({
   cols = 3 
 }: ImageGridProps) {
   const gridCols = `grid-cols-${Math.min(Math.max(cols, 1), 6)}`;
-
+    console.log(images)
   return (
     <div className={cn("grid gap-4", gridCols)}>
       {images.map((img) => (

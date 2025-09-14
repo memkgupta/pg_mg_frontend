@@ -60,7 +60,7 @@ const PgGalleryForm = () => {
         onChange={handleImageAdd}
         onRemove={removePgImage}
         onReplace={handleReplaceImages}
-      
+       value={details.gallery}
       
       />
     </div>

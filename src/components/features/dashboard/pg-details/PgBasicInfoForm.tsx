@@ -26,7 +26,7 @@ export default function PgBasicInfoForm() {
     },
     {
        fieldType:FormFieldTypeEnum.TEXT_AREA,
-      default:details!.basic.name,
+      default:details!.basic.description,
       label:"Description",
       fieldId:"description",
       onChange(value, state) {

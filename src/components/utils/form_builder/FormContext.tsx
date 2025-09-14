@@ -1,4 +1,4 @@
-import React, { createContext, ReactNode, useContext } from 'react'
+import React, { createContext, ReactNode, useContext, useEffect } from 'react'
 import { FieldState, FormContextProps, BaseField } from './types';
 import { ZodError, ZodTypeAny } from 'zod';
 import GenericForm from './form';
@@ -22,6 +22,7 @@ export function FormProvider<TSchema extends ZodTypeAny>({
   styling,
   children,
 }: FormProviderProps<TSchema>) {
+
  const [formState, setFormState] = React.useState(
   Object.fromEntries(fields.map(f => [f.fieldId, f.default]))
 );
@@ -34,9 +35,9 @@ const states: FieldState[] = fields.map(field => ({
   ] as [any, (val: any) => void]
 }));
     const [errors,setErrors] = React.useState<{fieldId:string,message:string}[]>([]);
-    const handleSubmit = (d:FieldState[])=>{
+    const handleSubmit = ()=>{
        const data:any = {}
-         d.forEach(state=>{
+         states.forEach(state=>{
           data[state.fieldId] = state.state[0]
          })
        
@@ -61,12 +62,19 @@ const states: FieldState[] = fields.map(field => ({
       }
     }
     }
+  useEffect(() => {
+  const initialState = Object.fromEntries(
+    fields.map(f => [f.fieldId, f.default])
+  );
+  setFormState(initialState);
+  console.log("Updated default formState:", initialState);
+}, [fields]);
     return (
     <FormContext.Provider value={{ fields:states, onSubmit, styling,errors,setErrors }}>
       <div className={cn(styling?.container,`w-full`,'place-items-center')}>
    {children}
    {onSubmit && <div className='p-1 w-full mt-4'>
-      <Button className={cn(styling?.button,`w-full`)}  onClick={()=>{handleSubmit(states)}}>Submit</Button>
+      <Button className={cn(styling?.button,`w-full`)}  onClick={()=>{handleSubmit()}}>Submit</Button>
    </div>}
  
       </div>

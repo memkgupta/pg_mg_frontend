@@ -18,6 +18,7 @@ export default function ImageSelector({
   gridCols = 3,
   crop,
 }: ImageSelectorProps) {
+   
   const [images, setImages] = useState<SelectedImage[]>(value);
   const [cropFile, setCropFile] = useState<File | null>(null);
   const [replaceId, setReplaceId] = useState<string | null>(null);
@@ -93,7 +94,9 @@ export default function ImageSelector({
       setCropFile(null);
     }
   };
-
+React.useEffect(() => {
+  setImages(value);
+}, [value]);
   return (
     <Card>
       <CardHeader>

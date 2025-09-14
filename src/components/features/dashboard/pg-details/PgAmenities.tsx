@@ -15,13 +15,14 @@ export default function PgAmenitiesForm() {
 
   const amenitiesFields: FormField[] = [
     {
-      fieldType: FormFieldTypeEnum.MULTI_TEXT, // <-- use your custom MultiTextFieldInput
+      fieldType: FormFieldTypeEnum.MULTI_TEXT, 
       default: details.amenities ?? [],
       label: "Amenities (comma separated)",
       fieldId: "amenities",
-      onChange(value) {
-        setDetails("amenities", value,true);
-      },
+     onChange(value){
+      setDetails("amenities",value)
+     },
+    
     },
   ];
 
