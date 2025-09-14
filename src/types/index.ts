@@ -126,7 +126,9 @@ export interface IRent{
   monthDateScheduled: number;
   lastDatePaid?: Date;
   monthsDue: number;
+  dueDate:Date;
   amount: number;
+  tenant?:Partial<ITenant>
 }
 export interface IReview {
   id: string;

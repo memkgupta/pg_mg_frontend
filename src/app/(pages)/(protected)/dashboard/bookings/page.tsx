@@ -11,35 +11,7 @@ import { PaginatedView } from "@/components/common/PaginatedView";
 import PageLoader from "@/components/common/Loader";
 import { format } from "date-fns";
 
-const bookings = [
-  {
-    id: 1,
-    tenant: "Rahul Sharma",
-    room: "101",
-    moveIn: "2025-09-01",
-    months: 6,
-    deposit: 5000,
-    status: "active",
-  },
-  {
-    id: 2,
-    tenant: "Priya Singh",
-    room: "203",
-    moveIn: "2025-09-05",
-    months: 3,
-    deposit: 4000,
-    status: "upcoming",
-  },
-  {
-    id: 3,
-    tenant: "Amit Verma",
-    room: "105",
-    moveIn: "2025-06-01",
-    months: 2,
-    deposit: 3000,
-    status: "completed",
-  },
-];
+
 
 export default function AdminBookingsPage() {
   const [search, setSearch] = useState("");

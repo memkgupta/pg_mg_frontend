@@ -71,5 +71,5 @@ const parsedParams =   Object.entries(data).reduce<Record<string, any>>(
            },
            {}
          )
-         return parseParams;
+         return parsedParams;
 }
