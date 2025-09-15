@@ -10,6 +10,7 @@ import { usePg } from "@/context/PgContext";
 import { PaginatedView } from "@/components/common/PaginatedView";
 import PageLoader from "@/components/common/Loader";
 import { format } from "date-fns";
+import Link from "next/link";
 
 
 
@@ -18,9 +19,9 @@ export default function AdminBookingsPage() {
   const [page,setPage]=useState(1);
   const {currentPg} = usePg()
   const{data:bookingPage,isFetching} = useApiGet<Page<IBooking>>(`/aggregate/pg/dashboard/bookings`,{params:{
-    pg_id:currentPg?.id
+    pg_id:currentPg?.id,"id~":search
   }},{
-    queryKey:["pg-dashboard-bookings",currentPg?.id]
+    queryKey:["pg-dashboard-bookings",currentPg?.id,search]
   })
 
   return (
@@ -30,7 +31,7 @@ export default function AdminBookingsPage() {
       {/* Search bar */}
       <div className="flex justify-between items-center mb-4">
         <Input
-          placeholder="Search by tenant or room..."
+          placeholder="Search by booking id"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           className="w-64"
@@ -61,7 +62,7 @@ export default function AdminBookingsPage() {
               {bookingPage.data.map((b) => (
                 <TableRow key={b.id}>
                 
-                  <TableCell>{b.roomId}</TableCell>
+                  <TableCell>{b.room?.roomNumber}</TableCell>
                   {/* <TableCell>{b.moveIn}</TableCell> */}
                   <TableCell>{format(b.createdAt,"PPP")}</TableCell>
                   
@@ -80,9 +81,9 @@ export default function AdminBookingsPage() {
                   </TableCell>
                   <TableCell>
                     <div className="flex gap-2">
-                      <Button size="sm" variant="outline">
+                      <Link href={`/dashboard/bookings/${b.id}`}  className="p-2 rounded-md">
                         View
-                      </Button>
+                      </Link>
                       <Button size="sm" variant="destructive">
                         Cancel
                       </Button>

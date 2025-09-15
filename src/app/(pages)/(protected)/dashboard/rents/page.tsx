@@ -57,7 +57,7 @@ const [page,setPage] = useState(1);
             <SelectValue placeholder="Select status" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">All</SelectItem>
+            
             <SelectItem value="pending">Pending</SelectItem>
             <SelectItem value="paid">Paid</SelectItem>
           </SelectContent>
@@ -93,7 +93,7 @@ const [page,setPage] = useState(1);
                   <TableCell>{format(r.dueDate,"PPP")}</TableCell>
                   <TableCell>{r.rentStatus}</TableCell>
                   <TableCell>
-                    {r.rentStatus === "pending" && <CollectRentModal/>}
+                    {r.rentStatus === "pending" && <CollectRentModal rent={r}/>}
                   </TableCell>
                 </TableRow>
               ))}

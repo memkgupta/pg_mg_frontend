@@ -12,7 +12,8 @@ export interface User {
   email: string;
   avatar?: string;
   createdAt: string;
-  role?:"user"|"pg"
+  role?:"user"|"pg";
+  name?:string;
 }
 export interface AuthState {
   user: User | null;
@@ -149,6 +150,9 @@ export interface IBooking{
   transactionId?: string;
   createdAt: Date;
   updatedAt: Date;
+  user?:User
+  tenant?:Partial<ITenant>
+ 
 }
 export interface IDashboard{
  pg:{name:string,rent?:number,room_no:string,address:string};
